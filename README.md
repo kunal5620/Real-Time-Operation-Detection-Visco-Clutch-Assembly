@@ -51,9 +51,9 @@ Real-Time Alerts to Operator
   
 - Software & Tools:   Python,  OpenCV – Image processing,  Machine Learning Models (classification/detection), PLC Communication Protocols (e.g., OPC / TCP-IP / Industrial I/O)
 
-📊 Results & Impact
-✅ 0 Internal Customer Complaints
-✅ 100% Machine Uptime
-✅ 0 Breakdown Time
-✅ Improved production quality and reliability
+📊 Results & Impact <br>
+✅ 0 Internal Customer Complaints <br>
+✅ 100% Machine Uptime <br>
+✅ 0 Breakdown Time <br>
+✅ Improved production quality and reliability <br>
 ✅ Reduced manual inspection effort
