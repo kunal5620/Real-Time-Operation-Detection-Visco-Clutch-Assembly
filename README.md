@@ -50,3 +50,10 @@ Real-Time Alerts to Operator
 - Hardware:  Industrial Camera (Production Line Vision System), PLC (Programmable Logic Controller)
   
 - Software & Tools:   Python,  OpenCV – Image processing,  Machine Learning Models (classification/detection), PLC Communication Protocols (e.g., OPC / TCP-IP / Industrial I/O)
+
+📊 Results & Impact
+✅ 0 Internal Customer Complaints
+✅ 100% Machine Uptime
+✅ 0 Breakdown Time
+✅ Improved production quality and reliability
+✅ Reduced manual inspection effort
