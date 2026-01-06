@@ -1,0 +1,784 @@
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBA Project UI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 5px;
+            color: #080202;
+            text-align: center;
+            flex-direction: column;
+            position: relative;
+            height: 70px;
+        }
+        .logo-left {
+            position: absolute;
+            left: 60px;
+            width: 230px;
+            height: 75px;
+        }
+        .logo-right {
+            position: absolute;
+            right: 60px;
+            width: 230px;
+            height: 75px;
+        }
+        .left-text {
+            position: absolute;
+            left: 200px;
+            width: 1200px;
+            height: 80px;
+            font-size: 60px;
+        }
+        .header .line {
+            align-content: center;
+            margin: 0;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1e88e5;
+            box-shadow: 6px 6px 10px rgba(51, 23, 23, 0.2);
+            width: 270px;
+        }
+        .disclaimer {
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 5px;
+            margin: 8px auto 20px;
+            width: 97.5%;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 15px;
+        }
+        .box-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 1px 1px;
+        }
+        .box {
+            width: 48%;
+            height: 485px;
+            background-color: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 3px;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Styling for image inside Box 1 */
+        .box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 3px;
+        }
+        .horizontal-box {
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 5px;
+            margin: 8px auto 20px;
+            width: 97.5%;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 55px;
+            margin-top: 15px;
+            height: 70px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="file:///D:/ANAND Project/UI Build/Trial UI/static/logo/haldex-logo.png" alt="Haldex Logo" class="logo-left">
+        <h1 class="left-text">MBA Defect Detection</h1>        
+        <img src="file:///D:/ANAND Project/UI Build/Trial UI/haldex-logo.png" alt="Haldex Logo" class="logo-right">
+    </div>
+    <div class="disclaimer" id="disclaimer">
+       //Date and time added here through the script
+    </div>
+    
+    <div class="box-container">
+        <div class="box" id="box1">
+            //Display the latest image here
+            <img id="latestImage" src="" alt="Latest Image" style="display: none;">
+        </div>
+        <div class="box", id="box2">
+            <img id="resultImage" src="" alt="Result Image" style="display: none;">
+        </div>
+    </div>
+
+    <div class="horizontal-box">
+        Result Box 
+    </div>
+
+    <script>
+        // Function to update the current date and time in real time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            };
+            const dateTimeString = now.toLocaleDateString('en-US', options);
+            document.getElementById('disclaimer').innerText = `Current Date and Time: ${dateTimeString}`;
+        }
+
+        // Update the date and time every second
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Function to load the latest image
+        async function loadLatestImage() {
+            try {
+                const response = await fetch('/latest-image');
+                const data = await response.json();
+                
+                const imgElement = document.getElementById('latestImage');
+                imgElement.src = data.imagePath;
+
+                if (data.imagePath) {
+                    imgElement.style.display = 'block'; // Display the image once loaded
+                    processLatestImage(); // Call processLatestImage after loading the image
+                }
+            } catch (error) {
+                console.error("Failed to load latest image:", error);
+            }
+        }
+
+        // Function to process the latest image
+        async function processLatestImage() {
+            try {
+                const response = await fetch('/process-latest-image');
+                const data = await response.json();
+                console.log(data.message); // Log the server response message
+
+                const horizontalBox = document.querySelector('.horizontal-box');
+                if (data.overallStatus === "Okay") {
+                    horizontalBox.innerText = "Okay";
+                    horizontalBox.style.backgroundColor = "green";
+                    horizontalBox.style.color = "white";
+                } else {
+                    horizontalBox.innerText = "Not Okay";
+                    horizontalBox.style.backgroundColor = "red";
+                    horizontalBox.style.color = "white";
+                }
+            } catch (error) {
+                console.error("Failed to process the latest image:", error);
+            }
+        }
+        
+        // Function to load the latest result image
+        async function loadLatestResultImage() {
+            try {
+                const response = await fetch('/latest-result-image');
+                const data = await response.json();
+                
+                const resultImgElement = document.getElementById('resultImage');
+                resultImgElement.src = data.imagePath;
+
+                if (data.imagePath) {
+                    resultImgElement.style.display = 'block'; // Display the result image once loaded
+                }
+            } catch (error) {
+                console.error("Failed to load latest result image:", error);
+            }
+        }
+
+        // Check for new result image every 3 seconds (adjust interval as needed)
+        setInterval(loadLatestResultImage, 3000);
+
+        // Load result image on initial page load
+        loadLatestResultImage();
+
+
+        // Check for new result image every 3 seconds (adjust interval as needed)
+        //setInterval(loadLatestResultImage, 3000);
+
+        // Load the result image on initial page load
+        //loadLatestResultImage();
+
+        
+
+        // Check for new image every 3 seconds (adjust interval as needed)
+        setInterval(loadLatestImage, 2000);
+
+        // Load image on initial page load
+        //loadLatestImage();
+
+        setInterval(processLatestImage, 2000);
+    </script>
+    
+</body>
+</html>
+-->
+
+<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<!--
+<script>
+        // Function to update the current date and time in real time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            };
+            const dateTimeString = now.toLocaleDateString('en-US', options);
+            document.getElementById('disclaimer').innerText = `Current Date and Time: ${dateTimeString}`;
+        }
+
+        // Update the date and time every second
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Function to load the latest image
+        async function loadLatestImage() {
+            try {
+                const response = await fetch('/latest-image');
+                const data = await response.json();
+                
+                const imgElement = document.getElementById('latestImage');
+                imgElement.src = data.imagePath;
+
+                if (data.imagePath) {
+                    imgElement.style.display = 'block'; // Display the image once loaded
+                    processLatestImage(); // Call processLatestImage after loading the image
+                }
+            } catch (error) {
+                console.error("Failed to load latest image:", error);
+            }
+        }
+
+        // Function to process the latest image
+        async function processLatestImage() {
+            try {
+                const response = await fetch('/process-latest-image');
+                const result = await response.text();
+                console.log(result); // Log the server response
+            } catch (error) {
+                console.error("Failed to process the latest image:", error);
+            }
+        }
+        
+
+        // Check for new image every 3 seconds (adjust interval as needed)
+        setInterval(loadLatestImage, 3000);
+
+        // Load image on initial page load
+        loadLatestImage();
+
+        setInterval(processLatestImage, 3000);
+    </script>
+-->
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATS Project UI</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 5px;
+            color: #080202;
+            text-align: center;
+            flex-direction: column;
+            position: relative;
+            height: 70px;
+        }
+        .logo-left {
+            position: absolute;
+            left: 60px;
+            width: 185px;
+            height: 70px;
+        }
+        .logo-right {
+            position: absolute;
+            right: 60px;
+            width: 210px;
+            height: 75px;
+        }
+        .left-text {
+            position: absolute;
+            left: 180px;
+            width: 1200px;
+            height: 80px;
+            font-size: 60px;
+        }
+        .header .line {
+            align-content: center;
+            margin: 0;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1e88e5;
+            box-shadow: 6px 6px 10px rgba(51, 23, 23, 0.2);
+            width: 270px;
+        }
+        .disclaimer {
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 5px;
+            margin: 8px auto 20px;
+            width: 97.5%;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 15px;
+        }
+        .box-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 1px 1px;
+        }
+        .box {
+            width: 48%;
+            height: 485px;
+            background-color: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 3px;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Styling for image inside Box 1 */
+        .box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 3px;
+        }
+        .horizontal-box {
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 5px;
+            margin: 8px auto 20px;
+            width: 97.5%;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 55px;
+            margin-top: 15px;
+            height: 70px;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="header">
+        <img src="/static/logo/left-logo.png" alt="Haldex Logo" class="logo-left">
+        <h1 class="left-text">MAHALE Visco Clutch</h1>        
+        <img src="/static/logo/mahale-logo.png" alt="Haldex Logo" class="logo-right">
+    </div>
+    <div class="disclaimer" id="disclaimer">
+       // Date and time added here through the script
+    </div>
+    
+    <div class="box-container">
+        <div class="box" id="box1">
+            // Display the latest image here 
+            <img id="latestImage" src="" alt="Latest Image" style="display: none;">
+        </div>
+        <div class="box", id="box2">
+            <img id="resultImage" src="" alt="Result Image" style="display: none;">
+        </div>
+    </div>
+
+    <div class="horizontal-box">
+        Result Box 
+    </div>
+
+    <script>
+        // Function to update the current date and time in real time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            };
+            const dateTimeString = now.toLocaleDateString('en-US', options);
+            document.getElementById('disclaimer').innerText = `Current Date and Time: ${dateTimeString}`;
+        }
+
+        // Update the date and time every second
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Function to load the latest image
+        async function loadLatestImage() {
+            try {
+                const response = await fetch('/latest-image');
+                const data = await response.json();
+                
+                const imgElement = document.getElementById('latestImage');
+                imgElement.src = data.imagePath;
+
+                if (data.imagePath) {
+                    imgElement.style.display = 'block'; // Display the image once loaded
+                    processLatestImage(); // Call processLatestImage after loading the image
+                }
+            } catch (error) {
+                console.error("Failed to load latest image:", error);
+            }
+        }
+
+        // Function to process the latest image
+        async function processLatestImage() {
+            try {
+                const response = await fetch('/process-latest-image');
+                const data = await response.json();
+                console.log(data.message); // Log the server response message
+
+                const horizontalBox = document.querySelector('.horizontal-box');
+                if (data.overallStatus === "Okay") {
+                    horizontalBox.innerText = "Rolling Present";
+                    horizontalBox.style.backgroundColor = "green";
+                    horizontalBox.style.color = "white";
+                } else {
+                    horizontalBox.innerText = "Rolling Not Present";
+                    horizontalBox.style.backgroundColor = "red";
+                    horizontalBox.style.color = "white";
+                }
+            } catch (error) {
+                console.error("Failed to process the latest image:", error);
+            }
+            loadLatestResultImage()
+        }
+
+        // Variable to store the previous image path
+        let previousResultImagePath = "";
+
+        async function loadLatestResultImage() {
+            try {
+                const response = await fetch('/latest-result-image');
+                const data = await response.json();
+
+                const resultImgElement = document.getElementById('resultImage');
+
+                // Only update the image if the path has changed
+                if (data.imagePath && data.imagePath !== previousResultImagePath) {
+                    resultImgElement.src = data.imagePath;
+                    resultImgElement.style.display = 'block'; // Show the image
+
+                    // Update the previous image path to the new one
+                    previousResultImagePath = data.imagePath;
+                }
+            } catch (error) {
+                console.error("Failed to load latest result image:", error);
+            }
+        }
+
+        // Check for a new result image every 3 seconds
+        //setInterval(loadLatestResultImage, 3000);
+
+        // Load the result image on the initial page load
+        //loadLatestResultImage();
+
+        // Check for new image every 2 seconds (adjust interval as needed)
+        setInterval(loadLatestImage, 2000);
+
+        // Load image on initial page load
+        loadLatestImage();
+
+        //setInterval(processLatestImage, 2000);
+    </script>
+    
+</body>
+</html>
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABA Project UI</title>
+    
+    <style>
+        /* Normalize box-sizing for all elements */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 5px;
+            color: #080202;
+            text-align: center;
+            flex-direction: column;
+            position: relative;
+            height: 45px;
+            margin: 20px;
+        }
+
+        .logo-left {
+            position: absolute;
+            left: 5%;
+            width: 15%;
+            height: 140%;
+        }
+
+        .logo-right {
+            position: absolute;
+            right: 5%;
+            width: 15%;
+            height: 180%;
+        }
+
+        .left-text {
+            position: absolute;
+            left: 25%;
+            right: 25%;
+            font-size: 3rem;
+            text-align: center;
+        }
+
+        .header .line {
+            align-content: center;
+            margin: 0;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1e88e5;
+            box-shadow: 6px 6px 10px rgba(51, 23, 23, 0.2);
+            width: auto;
+        }
+
+        .disclaimer {
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 10px;
+            margin: 8px;
+            width: 98.5%;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .box-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1px;
+        }
+
+        .box {
+            flex: 1 1 calc(48% - 10px);
+            max-width: 48%;
+            height: 500px;
+            background-color: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 3px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Styling for image inside Box */
+        .box img {
+            max-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 3px;
+        }
+
+        .horizontal-box {
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 15px;
+            margin: 10px;
+            width: 98.5%;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="header">
+        <img src="/static/logo/left-logo.png" alt="Haldex Logo" class="logo-left">
+        <h1 class="left-text">MAHLE Visco Clutch</h1>        
+        <img src="/static/logo/mahale-logo.png" alt="Haldex Logo" class="logo-right">
+    </div>
+    <div class="disclaimer" id="disclaimer">
+       //Date and time added here through the script
+    </div>
+    
+    <div class="box-container">
+        <div class="box" id="box1">
+             
+            <img id="latestImage" src="" alt="Latest Image" style="display: none;">
+        </div>
+        <div class="box" id="box2">
+            <img id="resultImage" src="" alt="Result Image" style="display: none;">
+        </div>
+    </div>
+
+    <div class="horizontal-box" id="resultBox">
+        Result Box 
+    </div>
+
+    <script>
+        // Function to update the current date and time in real time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            };
+            const dateTimeString = now.toLocaleDateString('en-US', options);
+            document.getElementById('disclaimer').innerText = `Current Date and Time: ${dateTimeString}`;
+        }
+
+        // Update the date and time every second
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        let clearTimeoutId;
+
+        // Function to clear the images and result box content
+        function clearContent() {
+            document.getElementById('latestImage').style.display = 'none';
+            document.getElementById('latestImage').src = '';
+
+            document.getElementById('resultImage').style.display = 'none';
+            document.getElementById('resultImage').src = '';
+
+            const horizontalBox = document.getElementById('resultBox');
+            horizontalBox.innerText = "Result Box";
+            horizontalBox.style.backgroundColor = "#bbdefb";
+            horizontalBox.style.color = "#0d47a1";
+        }
+
+        // Function to load the latest image
+        async function loadLatestImage() {
+            try {
+                const response = await fetch('/latest-image');
+                const data = await response.json();
+                
+                const imgElement = document.getElementById('latestImage');
+                imgElement.src = data.imagePath;
+
+                if (data.imagePath) {
+                    imgElement.style.display = 'block';
+                    processLatestImage();
+                    resetClearTimeout(); // Reset the timeout
+                }
+            } catch (error) {
+                console.error("Failed to load latest image:", error);
+            }
+        }
+
+        // Function to process the latest image
+        async function processLatestImage() {
+            try {
+                const response = await fetch('/process-latest-image');
+                const data = await response.json();
+                console.log(data.message);
+
+                const horizontalBox = document.getElementById('resultBox');
+                if (data.overallStatus === "Okay") {
+                    horizontalBox.innerText = "Okay";
+                    horizontalBox.style.backgroundColor = "green";
+                    horizontalBox.style.color = "white";
+                } else {
+                    horizontalBox.innerText = "Not Okay";
+                    horizontalBox.style.backgroundColor = "red";
+                    horizontalBox.style.color = "white";
+                }
+                resetClearTimeout(); // Reset the timeout
+            } catch (error) {
+                console.error("Failed to process the latest image:", error);
+            }
+            loadLatestResultImage();
+        }
+
+        // Variable to store the previous image path
+        let previousResultImagePath = "";
+
+        async function loadLatestResultImage() {
+            try {
+                const response = await fetch('/latest-result-image');
+                const data = await response.json();
+
+                const resultImgElement = document.getElementById('resultImage');
+
+                if (data.imagePath && data.imagePath !== previousResultImagePath) {
+                    resultImgElement.src = data.imagePath;
+                    resultImgElement.style.display = 'block';
+                    previousResultImagePath = data.imagePath;
+                    resetClearTimeout(); // Reset the timeout
+                }
+            } catch (error) {
+                console.error("Failed to load latest result image:", error);
+            }
+            resetClearTimeout()
+        }
+
+        // Function to reset the timeout for clearing content
+        function resetClearTimeout() {
+            clearTimeout(clearTimeoutId);
+            clearTimeoutId = setTimeout(clearContent, 6000); // Clear content after 10 seconds
+        }
+
+        // Check for new image every 15 seconds
+        setInterval(loadLatestImage, 8000);
+
+        // Load image on initial page load
+        loadLatestImage();
+    </script>
+    
+</body>
